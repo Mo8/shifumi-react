@@ -1,26 +1,61 @@
 import './App.css';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-function Player(props){
-  const [value,setValue] = useState(null);
-  return <>
-  <h2>{props.name}  {value}</h2>
-  <button onClick={() => setValue("Pierre")}>Pierre</button>
-  <button onClick={() => setValue("Papier")}>Papier</button>
-  <button onClick={() => setValue("Ciseaux")}>Ciseaux</button>
-  </>;
-}
+const Shifumi = () => {
+  const [playerChoice, setPlayerChoice] = useState(null);
+  const [computerChoice, setComputerChoice] = useState(null);
+  const [winner, setWinner] = useState(null);
 
-function App() {
-  const title = (<h1> Pierre papier ciseaux</h1>);
+  const choices = ['rock', 'paper', 'scissors'];
+
+  useEffect(() => {
+    if (winner === 'Player' && 'Notification' in window) {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          new Notification('You won!', {
+            body: 'Congratulations!',
+            icon: '/path/to/icon.png'
+          });
+        }
+      });
+    }
+  }, [winner]);
+
+  const handlePlayerChoice = (choice) => {
+    const randomIndex = Math.floor(Math.random() * 3);
+    const computerChoice = choices[randomIndex];
+    setPlayerChoice(choice);
+    setComputerChoice(computerChoice);
+    if (
+      (choice === 'rock' && computerChoice === 'scissors') ||
+      (choice === 'paper' && computerChoice === 'rock') ||
+      (choice === 'scissors' && computerChoice === 'paper')
+    ) {
+      setWinner('Player');
+    } else if (choice === computerChoice) {
+      setWinner('Tie');
+    } else {
+      setWinner('Computer');
+    }
+  };
+
   return (
-    <div className="App">
-      {title}
+    <div>
+      <h1>Shifumi</h1>
       <div>
-      <Player name="Joueur 1"/>
-      <Player name="Joueur 2"/></div>
+        <button onClick={() => handlePlayerChoice('rock')}>Rock</button>
+        <button onClick={() => handlePlayerChoice('paper')}>Paper</button>
+        <button onClick={() => handlePlayerChoice('scissors')}>Scissors</button>
+      </div>
+      {playerChoice && (
+        <div>
+          <p>You chose: {playerChoice}</p>
+          <p>The computer chose: {computerChoice}</p>
+          <p>{winner === 'Tie' ? 'Tie!' : `Winner: ${winner}`}</p>
+        </div>
+      )}
     </div>
   );
-}
+};
 
-export default App;
+export default Shifumi;
