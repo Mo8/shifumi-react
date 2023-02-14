@@ -9,12 +9,20 @@ const Shifumi = () => {
   const choices = ['rock', 'paper', 'scissors'];
 
   useEffect(() => {
-    if (winner === 'Player' && 'Notification' in window) {
+    if (winner != null && 'Notification' in window) {
       Notification.requestPermission().then(permission => {
         if (permission === 'granted') {
+          if(winner === 'Player')
           new Notification('You won!', {
             body: 'Congratulations!',
-            icon: '/path/to/icon.png'
+          });
+          else if(winner === 'Computer')          
+          new Notification('You lose!', {
+            body: 'Maybe next time !',
+          });          
+          else if(winner === 'Tie')          
+          new Notification('Tie !', {
+            body: 'No !',
           });
         }
       });
